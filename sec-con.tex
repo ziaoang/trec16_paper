@@ -1,0 +1,6 @@
+\section{Conclusion}
+
+In this paper, we have made a first attempt to infer functional labels from reviews for summarizing and highlighting major characteristics of service functions.  We consider two kinds of similarities for measuring the semantic relatedness between labels and businesses, namely lexical similarity and embedding similarity. We propose an extended embedding model which can incorporate supervised information (i.e., the existing functional labels) to guide the learning process. We use ``pseudo labels" extracted from online reviews by using the relevance function in IR. By incorporating such weak supervision, the extended embedding models significantly outperform the original ones.  As baseline methods, we have considered multiple existing models for measuring both lexical and embedding similarities. Extensive experiments on a real-world Yelp dataset have shown that our proposed methods significantly outperform the baseline methods. 
+
+
+Currently, the candidate label set for a domain is assumed to be given in the task.  In the future, we will consider how to automatically extract candidate labels from review text.   We will also consider encoding the constraint that similar businesses should have similar labels into the learning process.

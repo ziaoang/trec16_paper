@@ -1,0 +1,42 @@
+\section{Scenario A: Push Notifications}
+\subsection{System Overview}
+As noted above, the scenario A push notifications on a mobile phone aims to push relevant and novel tweets to users and such tweets are triggered a relatively short time after the content is generated.
+In this section, we mainly discuss the architecture of our system, which is shown in \ref{fig:Asys}.
+From the figure, we can see that our system mainly contains two components:
+\begin{itemize}
+\item \textbf{Offline Module:} We utilize the external web resources to obtain context words about each interest profile. Using the Google Web Search API, we obtain top five relevant documents consisting of titles and snippets. 
+Then we preprocess the documents and incorporate with original query to generate a merged query document which has a more comprehensive word distribution.
+\item \textbf{Online Module:} We monitor and preprocess the tweet stream continuously, and we utilize a fast filter module to obtain more possible relevant tweets for each profile. In order to decrease the time delay, as soon as the system gets a possible relevant tweet, the system will immediately estimate the relevance between expanded query and the tweet. We will update the query-biased relevance threshold every day instead of using a time window.
+If the system judges a tweet as relevant tweet of a interest profile, the module of Novelty Verification will utilize a greedy clustering algorithm to decide whether the tweet can be regarded a new cluster compared with previous pushed Tweet pool. Once the tweet is regarded as novel tweet, the tweet will be pushed and appended into the pushed Tweet pool.
+\end{itemize}
+
+\subsection{Fast Filter}
+In order to boost the speed of identifying possible relevant tweets for each profile, 
+we simply filter tweets that do not contain any keywords for each profile,
+and the rest tweets are chosen as candidate tweet collection.
+
+\subsection{Relevance Estimation}
+We utilize the KL-divergence language model based retrieval method to measure the relevance between query language model $\widehat{\theta}_Q$ and tweet language model $\widehat{\theta}_T$. The smoothing methods we use for language model are: (a) DIR (Bayesian Smoothing with Dirichlet Priors) smoothing, (b) JM (Jelinek-Mercer method) smoothing.
+\begin{equation}
+\label{equ:lm}
+LMScore(T,Q) = \sum_{w \in Q} P(w|\widehat{\theta}_Q) \cdot logP(w|\widehat{\theta}_T)
+\end{equation}
+
+We incorporate the two scores using different smooth methods by linear interpolation.
+\begin{equation}
+\begin{aligned}
+\label{equ:merge}
+Score(T,Q) = \lambda \cdot LMScore_{Dir}(T,Q) \\+ (1-\lambda) \cdot LMScore_{JM}(T,Q)
+\end{aligned}
+\end{equation}
+Here we empirically set $\lambda$ as $0.5$.
+\subsection{Adaptive Query-biased Filtering}
+Considering the fact that different topics can affect different attentation to varying degrees,
+thus the count of relevant tweets are quite distinct.
+Thus we utilize two strategies to estimate the query-biased relevance threshold $\beta$, namely empirical setting and human assist selection. 
+(1) empirical setting method tries to utilize the popularity and relevance threshold in previous day of each query. Taking advantage of the ranked tweet list in scenario B, in our experiments, we utilize the relevance score of the tweet ranked at top ten as the relevance threshold $\beta$ in scenario A of next day. 
+(2) Human assist selection also utilizes the ranked tweet list in scenario B, while here human will involve and quickly scan the top 100 tweets (we think top 100 is enough) and decide which one's score is the lower bound. In other words, we will quickly scan the ranked list from top to bottom, once we find one tweet is not relevant, we choose the relevance score of the tweet as the relevance threshold $\beta$ of the query in the next day.
+
+Since the pushed tweets in the total evaluation period should be non-redundant,
+we adaptively update the threshold of each interest profile.
+Here we maintain a pushed tweet pool and utilize a greedy algorithm to determine whether a coming relevant tweet is novel or not \cite{fei2015handling,albakour2013sparsity}. We will calculate the relevance score between coming tweet and all the pushed tweets using the language model described in Relevance Estimation, then we greedily choose the pushed tweet that has highest relevance score with the coming tweet as reference. Once the highest relevance score is less than empirical novel threshold $\gamma$, we regard the coming tweet as novel tweet and push the tweet. Finally we append the coming tweet into the pushed tweet pool for estimating novelty of subsequent tweets.

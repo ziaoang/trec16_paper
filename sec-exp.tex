@@ -1,0 +1,57 @@
+\section{Result Analysis}
+Table \ref{tab:resA} show the performance of our submitted three runs for scenario A push notifications on a mobile phone. 
+The primary evaluation metric for scenario A is ELG (expected latency-discounted gain) and nCG (normalized cumulative gain) is the second metric.
+The run PKUICSTRunA1 adopts an adaptive relevance threshold $\beta$ according to the relevance score at top $K$ in scenario B of previous day. Here we set $K$ as 10. Both PKUICSTRunA1 and PKUICSTRunA2 adopt a empirically uniform novel threshold $\gamma=0.67$, while PKUICSTRunA2 utilizes an adaptive relevance threshold according to manual selected top position $K$ ($K<=10$) in scenario B of previous day. Different from PKUICSTRunA2, the run PKUICSTRunA3 uses a empirically uniform novel threshold $\gamma=0.72$.
+
+From Table \ref{tab:resA}, we can observe that PKUICSTRunA2 achieves the best performances against ELG and nCG, since the manual relevance threshold and the empirical uniform threshold $\gamma=0.67$ is effective to depict the needs of non-redundant and relevant tweets. Manual selected top $K$ ($K<=10$) can increase the precision as it limits the maximum returned tweets of each day, and empirical novel threshold $\gamma=0.67$ is more suitable that $\gamma=0.72$. 
+\begin{table}[htbp]
+\centering
+\caption{Performance of submitted runs for scenario A}
+\label{tab:resA}
+\begin{tabular}{lrrrr}
+\hline
+Run ID&ELG&nCG\\
+\hline
+PKUICSTRunA1&0.1415&0.1566\\
+PKUICSTRunA2&\textbf{0.3175}&\textbf{0.3127}\\
+PKUICSTRunA3&0.1382&0.1711\\
+\hline
+\end{tabular}
+\end{table}
+
+Table \ref{tab:resB} shows the performance of our submitted three runs for scenario B periodic email digest. 
+The primary evaluation metric is nDCG@K. 
+Among all the three runs,
+PKUICSTRunB1 utilizes an adaptive relevance threshold $\beta$ according to the relevance score at position $K$ of the ranked tweet list in scenario B of previous day. 
+Both PKUICSTRunB1 and PKUICSTRunB2 adopt a empirically uniform novel threshold $\gamma=0.67$, while PKUICSTRunB2 utilizes an adaptive relevance threshold according to manual selected top position $K$ ($K<=10$) in scenario B of previous day. Different from PKUICSTRunB2, the run PKUICSTRunA3 uses a empirically uniform novel threshold $\gamma=0.72$.
+
+From Table \ref{tab:resB}, we can see that PKUICSTRunB3 achieves the slightly better performances than other runs, while all of them do not obtain optimal performances against metric nDCG@K due to the uncertainty of $K$ during the experiments. Since we do not know $K$ during the evaluation period and up to $100$ tweets can be returned for each interest profile. However, the returned tweets in a specific day can affect whether some candidate tweets to return due to the redundancy settings. Thus we empirically return relevant and non-redundant tweets according to adaptive novel threshold but we cannot effectively control the returned count of each day. Further investigation and experiments are needed to solve this issue.
+
+\begin{table}[htbp]
+\centering
+\caption{Performance of submitted runs for scenario A}
+\label{tab:resB}
+\begin{tabular}{lrrr}
+\hline
+Run ID&nDCG\\
+\hline
+PKUICSTRunB1&0.2226\\
+PKUICSTRunB2&0.2228\\
+PKUICSTRunB3&\textbf{0.2343}\\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Conclusion}
+In this paper, we present our systems for TREC 2015 Microblog track.
+In the push notification on a mobile phone scenario, 
+we apply an adaptive timely query-biased filtering framework which monitors and estimates the twitter stream with given interest profiles continuously and immediately.
+In the periodic email digest scenario,
+We apply pseudo-relevance feedback using language model to rank candidate tweets and then we adopt an adaptive dynamic query-biased filtering method to choose the novel representative tweets every day.
+Many further investigations and experiments are needed to estimate the sensitivity of relevance threshold and novel threshold, besides, the setting of $K$ is also needed to discuss in the future as soon as we get the ground truth and evaluation scripts.
+
+
+
+
+
+
