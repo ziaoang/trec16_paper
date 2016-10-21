@@ -1,9 +1,27 @@
 \section{Scenario B: Email Digest}
-\subsection{System Overview}
-Our approach for this scenario also mainly contains two components:
+In the Email Digest Scenario, we will identify a batch of up to 100 ranked tweets per day per interest profile.At a high level, these results should be relevant and novel; timeliness is not important as long as the tweets were all posted on the previous day.
+
+As shown in Fiqure ****, our system for this scenario mainly contains four modules:
+
 \begin{itemize}
-\item \textbf{Offline Module:} Similar with Scenario A, we utilize the expanded query to represent the interest profile.
-\item \textbf{Online Module:} We monitor and preprocess the tweet stream continuously, and we utilize a fast filter module to obtain more possible relevant tweets for each profile. Different from scenario A, we maintain a candidate tweet collection for each profile every day. At the end of each day, we will re-rank the candidate tweet collection for each profile which incorporates with pseudo relevance feedback. Once we obtain the ranked tweet list, we have two strategies to determine the query-biased relevance threshold $\beta$ of next day, thus we can adaptively update the relevance threshold as time goes on. Similarly, we adopt a module of novel verification along with pushed tweet pool to ensure the novelty of recommended tweets as possible.
+\item \textbf{Data cleaning module:} We pre-process all tweets during evaluation period. And we simply filter tweets that do not contain any keywords for each interest profile, and the rest tweets are chosen as candidate tweet collection, which will accelerate identifying possible relevant tweets for each profile.
+
+we utilize the expanded query to represent the interest profile.
+
+\item \textbf{Query expansion module:} As microblog retrieval suffers severely from the
+vocabulary-mismatch problem (i.e. term overlap between query and tweet is relatively small). To tackle this issue, we leverage web-based query expansion method to improve retrieval performance. As is known to all, Google search is the dominant search engine in the majority countries over the world, which indexes billions[195] of web pages, so that users can search for the information they desire through the use of keywords and operators. Therefore, we take the interest profile as the keywords to search in Google with Google Search Engine API before the evalution period.
+
+
+As the user interest profile offered by TREC'2016 are JSON-formatted structure and each profile includes four fields, topid, title, description and narrative. Here we only use the topic keywords as our OriginQuery since we utilize external web resource to depict the background information, noted as IssueQuery. Then, we generate the ExpansionQuery by interpolating the OriginQuery and IssueQuery.
+
+\item \textbf{Relevance ranking module:} Similar with Scenario A, we utilize the KL-divergence language model based retrieval method to measure the relevance between query and tweet.
+
+\item \textbf{Novelty verfication module:} Once we obtain the ranked tweet list after relevance ranking, we adopt the novelty verfication module along with pushed tweet pool to pick up novel tweets.
+
+
+In this module, there are two kinds of strategies to measure novelty between tweets: (1)Language model. The higher relevance score between tweets, the less novelty they are. (2)Simhash, which is a popular method to handle web page redundancy. simhash is one where similiar items are hashed to similiar hash values and we can calculate the bitwise hamming distance between hash values. The closer hamming distance between two tweets is, the more similar they are. The simhash code is calculated as follow,
+
+****公式
 \end{itemize}
 
 \begin{figure}[htbp]
@@ -15,10 +33,6 @@ Our approach for this scenario also mainly contains two components:
 \label{fig:Bsys}
 \end{figure}
 
-The modules of \textit{Fast Filter}, \textit{Relevance Estimation} and \textit{Adaptive Query-biased Filtering} are similar with scenario A.
-\subsection{PRF query expansion}
-We utilize pseudo relevance feedback to improve the retrieval performance which is widely used in microblog search \cite{lv2009comparative}.
-Here we directly follow \cite{liang2012exploiting} work to incorporate the module in the ranking process.
 
 % In this section, we first introduce the preliminaries and then present our approach.
 % The proposed approach is a combination between an embedding based model and a probabilistic retrieval ranking method. Our major focus is to extend the traditional embedding model for the current task. The extensions are in two aspects: (1) We incorporate supervised labels in the embedding models; (2) We automatically rank candidate phrases to generate pseudo functional labels.
