@@ -1,18 +1,23 @@
 \section{Scenario B: Email Digest}
 In the Email Digest Scenario, we will identify a batch of up to 100 ranked tweets per day per interest profile.At a high level, these results should be relevant and novel; timeliness is not important as long as the tweets were all posted on the previous day.
 
-As shown in Fiqure ****, our system for this scenario mainly contains four modules:
+As shown in \ref{fig:Bsys}, our system for this scenario mainly contains four modules:
 
 \begin{itemize}
 \item \textbf{Data cleaning module:} We pre-process all tweets during evaluation period. And we simply filter tweets that do not contain any keywords for each interest profile, and the rest tweets are chosen as candidate tweet collection, which will accelerate identifying possible relevant tweets for each profile.
-
-we utilize the expanded query to represent the interest profile.
 
 \item \textbf{Query expansion module:} As microblog retrieval suffers severely from the
 vocabulary-mismatch problem (i.e. term overlap between query and tweet is relatively small). To tackle this issue, we leverage web-based query expansion method to improve retrieval performance. As is known to all, Google search is the dominant search engine in the majority countries over the world, which indexes billions[195] of web pages, so that users can search for the information they desire through the use of keywords and operators. Therefore, we take the interest profile as the keywords to search in Google with Google Search Engine API before the evalution period.
 
 
-As the user interest profile offered by TREC'2016 are JSON-formatted structure and each profile includes four fields, topid, title, description and narrative. Here we only use the topic keywords as our OriginQuery since we utilize external web resource to depict the background information, noted as IssueQuery. Then, we generate the ExpansionQuery by interpolating the OriginQuery and IssueQuery.
+As the user interest profile offered by TREC 2016 are JSON-formatted structure and each profile includes four fields, topid, title, description and narrative. Here we only use the topic keywords as our \emph{OriginQuery} since we utilize external web resource to depict the background information, noted as \emph{IssueQuery}. Then, we generate the \emph{ExpansionQuery} by interpolating the \emph{OriginQuery} and \emph{IssueQuery}.
+
+\begin{equation}
+\label{equ:merge}
+\emph{ExpansionQuery} = \alpha \cdot \emph{OriginQuery} + (1-\alpha) \cdot \emph{IssueQuery}
+\end{equation}
+
+We utilize the expanded query to represent the interest profile and then estimate the relevance between the query and tweets.
 
 \item \textbf{Relevance ranking module:} Similar with Scenario A, we utilize the KL-divergence language model based retrieval method to measure the relevance between query and tweet.
 
