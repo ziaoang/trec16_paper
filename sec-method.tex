@@ -1,8 +1,16 @@
 \section{Preliminaries}
-In this section, we first introduce the preliminaries for tweets in both scenarios. Our system will continuously monitor the Twitter's live tweet sample stream using the official API. As soon as the system obtains the json data of tweets, the system will preprocess the tweet text and filter tweets without any keywords in each user's profile.
+In this section, we mainly discuss the preliminaries for interest profiles and tweets in both scenarios.
 
-\subsection{Pre-processing}
-The preprocessing we adopt on tweet stream is described as follows:
+\subsection{Query Expension}
+As the length of tweets are limited to $140$ characters, the microblog retrieval
+suffers severely from the vocabulary mismatch problem.
+Query expansion techiniques can be used to improve the retrieval performance.
+Due to the timely need of the push notifications scenario,
+we just take advantage of query expansion in the email digest scenario.
+Details will be discuss in the corresponding section.
+
+\subsection{Text Preprocessing}
+The preprocessing we adopt on interest profile and tweet stream is described as follows:
 \begin{itemize}
 \item \textbf{Non-English Filtering:} Tweets written in a language other than English would be judged as not relevant based on guidelines of Real-Time Summarization Track. Thus, we use the twitter's language detector to abandone the non-English tweets.
 \item \textbf{Non-ASCII Words:} Removing all NON-ASCII characters from the tweets will also helps remove non-English tweets.
@@ -10,14 +18,14 @@ The preprocessing we adopt on tweet stream is described as follows:
 \item \textbf{Porter Stemming and Stopword Filtering:} We remove all stopwords and stem the tweet text using the Natural Language Toolkit.
 \end{itemize}
 
-\subsection{Filtering}
-In order to boost the speed of identifying possible relevant tweets for each user's interest profile $q$, we simply filter tweets that do not contain any keywords for each profile $q$, and the rest tweets are chosen as candidate tweet collection $\Gamma$ for $q$.
-
-\begin{figure}[htbp]
-\centering
-{
-	\epsfig{file=figures/scenarioA.pdf,width=0.45\textwidth}
-}
-\caption{Scenario A System Framework.}
-\label{fig:Asys}
-\end{figure}
+\subsection{Statistics Inforamtion}
+In the language model, if any word in the query is not in the document,
+the relevant score between them will equal to zero, which is unreasonable.
+Smooth techiniques could solve this problem by merging global word
+probability distribution with current document model.
+In our proposed approach, we obtain the global word probability distribution
+by computing word count information of tweet stream during two time intervals.
+The first one is 2015 July, which is offered by the TREC
+\footnote{https://archive.org/details/archiveteam-twitter-stream-2015-07}.
+The second one is a week before the track, we obtain it via listening to
+the official Twitter stream.

@@ -1,42 +1,86 @@
 \section{Scenario A: Push Notifications}
-\subsection{System Overview}
-As noted above, the scenario A push notifications on a mobile phone aims to push relevant and novel tweets to users and such tweets are triggered a relatively short time after the content is generated.
-In this section, we mainly discuss the architecture of our system, which is shown in \ref{fig:Asys}.
-From the figure, we can see that our system mainly contains two components:
+As previously mentioned, the goal of push notifications is to recommend relevant and
+novel tweets based on the user’s interest profile in real-time.
+At a high level, push notifications should be relevant (on topic),
+timely (provide updates as soon after the actual event occurrence as possible),
+and novel (users should not be pushed multiple notifications that say the same thing).
+In this section, we mainly describe the architecture of our proposed system, which is shown in \ref{fig:a}.
+
+\begin{figure}[htbp]
+\centering {
+	\epsfig{file=figures/a.pdf, width=0.35\textwidth}
+}
+\caption{The System Architecture of the Push Notifications Scenario.}
+\label{fig:a}
+\end{figure}
+
+From the figure, we can observe that our system mainly contains three processes and two storage tables:
+
 \begin{itemize}
-\item \textbf{Offline Module:} We utilize the external web resources to obtain context words about each interest profile. Using the Google Web Search API, we obtain top five relevant documents consisting of titles and snippets. 
-Then we preprocess the documents and incorporate with original query to generate a merged query document which has a more comprehensive word distribution.
-\item \textbf{Online Module:} We monitor and preprocess the tweet stream continuously, and we utilize a fast filter module to obtain more possible relevant tweets for each profile. In order to decrease the time delay, as soon as the system gets a possible relevant tweet, the system will immediately estimate the relevance between expanded query and the tweet. We will update the query-biased relevance threshold every day instead of using a time window.
-If the system judges a tweet as relevant tweet of a interest profile, the module of Novelty Verification will utilize a greedy clustering algorithm to decide whether the tweet can be regarded a new cluster compared with previous pushed Tweet pool. Once the tweet is regarded as novel tweet, the tweet will be pushed and appended into the pushed Tweet pool.
+\item \textbf{Filter Module:} 
+In order to accelerate the speed of identifying possible relevant tweets for each profile,
+We first build a interest vocabulary based on all words in the given users' interest profiles.
+Then, the Twitter sample stream is obtained via the Twitter API.
+For each crawled tweet, we check whether it contains any words in our interest vocabulary.
+If contains, we insert it into our candidate tweets storage table. If not, filter it.
+In this way, we simply ignore tweets that do not contain any keywords for each profile.
+
+\item \textbf{Judge Module:}
+This process keeps ``listening'' to the candidate tweets storage table.
+In every $T1$, it selects at most $K1$ untreated candidate tweets and compare them with the given users' interest profiles.
+For each (tweet, profile) pair, we first calculate the relevant score between them by the text similarity function $f$.
+If the relevant scroe is bigger than $\alpha$, we then compute similarity scores between this tweet and all pushed tweets of this profile
+via the text similarity function $f$, the biggest one will be chosen as the novel scroe.
+If the novel score is smaller than $\beta$, we will insert it into the submission tweets storage table.
+In the last, these selected tweets will be set to treated or removed from the storage table.
+
+\item \textbf{Submit Module:}
+This process keeps ``listening'' to the submission tweets storage table.
+In every $T2$, it selects at most $K2$ untreated submission tweets and try to submit them to the evalation broker one by one.
+If return code is $204$ for one tweet, which means the remote server accepted it successfully,
+we will set the submitted tweet treated or remove it from the storage table.
+Otherwise, the tweet is going to handle in the next round until accepted.
 \end{itemize}
 
-\subsection{Fast Filter}
-In order to boost the speed of identifying possible relevant tweets for each profile, 
-we simply filter tweets that do not contain any keywords for each profile,
-and the rest tweets are chosen as candidate tweet collection.
+\subsection{Similarity Algorithm}
+We utilize the KL-divergence language model for $f$ and $g$ to measure the relevance between
+query language model $\widehat{\theta}_Q$ and tweet language model $\widehat{\theta}_D$
+with the help of collection lanuage model $\widehat{\theta}_C$.
+The smoothing methods we use for language model are:
 
-\subsection{Relevance Estimation}
-We utilize the KL-divergence language model based retrieval method to measure the relevance between query language model $\widehat{\theta}_Q$ and tweet language model $\widehat{\theta}_T$. The smoothing methods we use for language model are: (a) DIR (Bayesian Smoothing with Dirichlet Priors) smoothing, (b) JM (Jelinek-Mercer method) smoothing.
-\begin{equation}
-\label{equ:lm}
-LMScore(T,Q) = \sum_{w \in Q} P(w|\widehat{\theta}_Q) \cdot logP(w|\widehat{\theta}_T)
-\end{equation}
-
-We incorporate the two scores using different smooth methods by linear interpolation.
+(a) Jelinek-Mercer Smoothing
 \begin{equation}
 \begin{aligned}
-\label{equ:merge}
-Score(T,Q) = \lambda \cdot LMScore_{Dir}(T,Q) \\+ (1-\lambda) \cdot LMScore_{JM}(T,Q)
+JM(Q,&T,C) = \sum_{w \in Q} P(w|\widehat{\theta}_Q) \cdot \\
+&log \left( (1-\lambda) * P(w|\widehat{\theta}_T) + \lambda * P(w|\widehat{\theta}_C) \right)
 \end{aligned}
 \end{equation}
-Here we empirically set $\lambda$ as $0.5$.
-\subsection{Adaptive Query-biased Filtering}
-Considering the fact that different topics can affect different attentation to varying degrees,
-thus the count of relevant tweets are quite distinct.
-Thus we utilize two strategies to estimate the query-biased relevance threshold $\beta$, namely empirical setting and human assist selection. 
-(1) empirical setting method tries to utilize the popularity and relevance threshold in previous day of each query. Taking advantage of the ranked tweet list in scenario B, in our experiments, we utilize the relevance score of the tweet ranked at top ten as the relevance threshold $\beta$ in scenario A of next day. 
-(2) Human assist selection also utilizes the ranked tweet list in scenario B, while here human will involve and quickly scan the top 100 tweets (we think top 100 is enough) and decide which one's score is the lower bound. In other words, we will quickly scan the ranked list from top to bottom, once we find one tweet is not relevant, we choose the relevance score of the tweet as the relevance threshold $\beta$ of the query in the next day.
 
-Since the pushed tweets in the total evaluation period should be non-redundant,
-we adaptively update the threshold of each interest profile.
-Here we maintain a pushed tweet pool and utilize a greedy algorithm to determine whether a coming relevant tweet is novel or not \cite{fei2015handling,albakour2013sparsity}. We will calculate the relevance score between coming tweet and all the pushed tweets using the language model described in Relevance Estimation, then we greedily choose the pushed tweet that has highest relevance score with the coming tweet as reference. Once the highest relevance score is less than empirical novel threshold $\gamma$, we regard the coming tweet as novel tweet and push the tweet. Finally we append the coming tweet into the pushed tweet pool for estimating novelty of subsequent tweets.
+(b) Dirichlet Smoothing
+\begin{equation}
+DIR(Q,T,C) = JM(Q,T,C), \lambda = \frac{\mu}{|T| + \mu}
+\end{equation}
+
+\subsection{Parameter Selection}
+The $T1$ and $T2$ are both set to $10$ seconds.
+$K1$ is set to $1000$ while $K2$ is set to $10$ due to their different scale.
+Those parameters are set empirically and mainly depend on your computer performance.
+$\alpha$ and $\beta$ are tuned via grid search on TREC 2015 dataset,
+which is showed in Table \ref{tab:paraA}.
+
+\begin{table}[htbp]
+\centering
+\caption{Parameters in the Email Digest Scenario.}
+\label{tab:paraA}
+\begin{tabular}{lccc}
+\hline
+Run ID&f&\alpha&\beta\\
+\hline
+PKUICSTRunA1&JM(\lambda=0.2)&0.79&0.72\\
+PKUICSTRunA2&JM(\lambda=0.5)&0.85&0.74\\
+PKUICSTRunA3&DIR(\mu=100)&0.75&0.68\\
+\hline
+\end{tabular}
+\end{table}
+
+

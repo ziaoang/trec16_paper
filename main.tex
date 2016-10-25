@@ -32,11 +32,11 @@
 % The file aaai.sty is the style file for AAAI Press 
 % proceedings, working notes, and technical reports.
 %
-\title{PKUICST at TREC 2016 Real-Time Summarization Track: \\
+\title{PKUICST at TREC 2016 Real-Time Summarization Track:\\
 Push Notifications and Email Digest
 }
-\author{Lili Yao \quad Chao Lv \quad Feifan Fan \quad Yansong Feng\footnote{Corresponding author} \quad Dongyan Zhao\\
-\{yaolili, lvchao, fanff, fengyansong, zhaody\}@pku.edu.cn\\
+\author{Lili Yao \quad Chao Lv \quad Feifan Fan \quad Jianwu Yang\footnote{Corresponding author} \quad Dongyan Zhao\\
+\{yaolili, lvchao, fanff, yangjw, zhaody\}@pku.edu.cn\\
 \\
 Institute of Computer Science and Technology\\
 Peking University, Beijing 100871, China\\
@@ -47,17 +47,15 @@ Peking University, Beijing 100871, China\\
 \begin{quote}
 This paper describes our approaches for the TREC 2016 Real-Time Summarization track,
 including push notifications scenario and email digest scenario.
-In the push notifications scenario, we design a real-time system, which listens to the Twitter sample stream and makes the push decisions for the given topics.
+In the push notifications scenario, we mainly focus on designing a real-time system,
+which listens to the Twitter sample stream and makes the push actions for the given topics.
 Low coupling modules are utilized to obtain the timely, relevant and novel features.
-
-%In the email digest scenario, we apply pseudo-relevance feedback using language model and
-%similarly we adopt an adaptive dynamic query-biased filtering method to choose the novel representative tweets.
-
-%Besides, the results of scenario periodic email digest can promote the performance of scenario push notifications since we %utilize shared global relevance threshold. 
-
-%Experimental results show that our adaptive query-biased filtering methods achieve good performance with respect to ELG and nCG metrics for push notifications scenario.
-
-%In addition, our systems for scenario periodic email digest also obtain convincing nDCG scores.
+In the email digest scenario, we apply the language model combined
+with the external knowledge base, i.e. Google, for query expansion.
+Besides, different text similarity algorithms are tried, such as nagetive KL-divergence and Simhash.
+Experimental results show that our two-stage filtering methods achieve good performance
+with respect to EG1 and nCG1 metrics for push notifications scenario.
+In addition, our systems for email digest scenario also obtain convincing nDCG1 scores.
 \end{quote}
 \end{abstract}
 
@@ -66,9 +64,10 @@ Low coupling modules are utilized to obtain the timely, relevant and novel featu
 \input{sec-a}
 \input{sec-b}
 \input{sec-exp}
+\input{sec-con}
+
 \section{Acknowledgments}
 The work reported in this paper is supported by the National Natural Science Foundation of China Grant 61370116.
-%\input{sec-con}
 
 \bibliographystyle{aaai}
 \bibliography{yelp}

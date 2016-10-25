@@ -1,19 +1,51 @@
 \section{Introduction}
-As with the microblog shch as Twitter rapidly getting popular, the information that microblog covered is rather numerous than expected. To explore user's interests and boost retrieval and recommendation performance in real-time environment, TREC first introduced real-time task in 2011\cite{ounis2011overview}. And the Real-Time Summarization Track in 2016 is a single real-time filtering task broken down into two scenarios, which is aiming to explore techniques for monitoring streams of social media posts with respect to users' interest profiles. Different from the last year's Microblog track, it requires an on-line decision, which means participating systems need to decide whether or not push notification for a tweet before seeing the subsequent tweets. And two scenarios are described as follow:
+With the rapid development of the microblog, shch as Twitter and Weibo,
+the information that microblog covered is rather numerous than expected.
+To explore user's interests and boost recommendation performance in real-time environment,
+TREC first introduced Tweet Timeline Generation (TTG) track in 2014\cite{lin2014overview} and developed it in 2015.
+The Real-Time Summarization Track in TREC 2016 is a real-time summarization task broken down into two scenarios,
+which is aiming to explore techniques for monitoring streams of social media posts with respect to users' interest profiles.
+Different from the last year's Microblog track, it requires a real on-line decision,
+which means participating systems need to decide whether or not push notification for a tweet before seeing the subsequent tweets.
+And two scenarios are described as follow:
 
 \begin{itemize}
 \item \textbf{Scenario A (mobile notification):} Content that is identified as relevant and novel by a system based on the user's interest profile should be sent to the user in a timely fashion. 
-\item \textbf{Scenario B (email digest):} Participating systems should identify tweets and aggregate them into an email digest. The email should be periodically sent to a user(e.g., nightly). Under that circumstances, users can read a longer story about the contents.
+\item \textbf{Scenario B (email digest):} Participating systems should identify tweets and aggregate them into an email digest. The email should be periodically sent to a user. Under that circumstances, users can read a longer story about the contents.
 \end{itemize}
 
+In the push notifications scenario, our system requires to ``listen'' to
+the Twitter API\footnote{https://github.com/lintool/twitter-tools}
+and make real-time push actions for each interest profile.
+We design a on-line system which contains three modules:
+Filter Module, Judge Module and Submit Module.
+When a new tweet $D$ comes, we use Filter Module to remove it
+if it has no overlap words with all the interest profiles.
+In the Judge Module, we first estimate the relevance score between the tweet
+and each interest profile using the normailzed negative KL-divegence distance.
+A tuned relavance threshold $\alpha$ is utilized to judge whether $D$ and
+the interest profile are relavant.
+Meanwhile, we keep a push queue for each interest profile.
+Then, for every relavant interest profile $Q$, we estimate the novel score by comparing $D$
+with previous tweets in its push queue.
+Similarly, we use the normailzed negative KL-divegence distance and a tuned
+novel threshold $\beta$ to decide whether $D$ is a novel one for the interest profile $Q$.
+Submit Module is used to submit passed tweets to the Evaluation Broker with the power to 
+handle error code from remote server.
+It can also store the push queue for each interest profile and help recover our system
+if any crash happens.
 
-Remain TODO
+In the scenario of email digest, similar with scenario A,
+we firstly clean the raw tweets generated between evaluation period.
+To better understand the user intent,
+we utilize Google web resource as external evidences to expand original query.
+Then, the language model framework is applyed to estimate the relevance between given interest profile with candidate tweets.
+For each interest profile,
+we rank the candidate tweets of every day by the relevance scores which adopt two different smooth methods. 
+Once we obtain the ranked tweet list,
+we calculate the novelty scores between the candidate tweet with each tweet that has been pushed previously,
+the novelty threshold $\gamma$ is used to determine whether the candidate tweet is included in the email digest.
+And there are two kinds of strategies to measure the novelty,
+which will be explained in Section 4 in detail.
 
 
-In the scenario of push notifications on a mobile phone, different from the other scenario, for each interest profile, when a candidate tweet comes, we immediately determine whether to push the tweet to the interest profile. We first estimate the relevance score between the tweet and interest profile using the normalized KL-divergence distance. For interest profile $Q$ in day $D$, we utilize the adaptive threshold $\beta$ in the previous scenario to decide whether the tweet is relevant to $Q$. Then we compare the tweet with previous pushed tweet in this scenario of $Q$. Similarly, we use a tuned novel threshold $\gamma$ to decide whether to push the tweet to the interest profile.
-
-
-In the scenario of email digest, similar with scenario A, we firstly clean the raw tweets generated between evaluation period. To better understand the user intent, we utilize Google web resource as external evidences to expand original query. Then, the language model framework is applyed to estimate the relevance between given interest profile with candidate tweets. For each interest profile, we rank the candidate tweets of every day by the relevance scores which adopt two different smooth methods. Once we obtain the ranked tweet list, we calculate the novelty scores between the candidate tweet with each tweet that has been pushed previously, the novelty threshold $\gamma$ is used to determine whether the candidate tweet is included in the email digest. And there are two kinds of strategies to measure the novelty, which will be explained in Section 4 in detail.
-
-
-The remainder of the paper is organized as follows: We first introduce the preliminaries of both scenarios in Section 2. In Section 3 and Section 4, we describe our system for pushing notifications on a mobile phone task and periodic email digest task respectively. And then, we present our experimental results and analysis in Section 5. At last, we conclude our paper in Section 6.

@@ -1,29 +1,54 @@
 \section{Result and Analysis}
-The evaluation of TREC 2016 Real-time Summarization track take place from Tuesday, August 2, 2016 00:00:00 UTC to August 11, 2016 23:59:59 UTC. And there are 203 interest profiles which participants will be responsible for tracking. During the evaluation period, participants must maintain a running system that continuously monitors the tweet sample stream.
+The evaluation of TREC 2016 Real-time Summarization track takes place from
+Tuesday, August 2, 2016 00:00:00 UTC to August 11, 2016 23:59:59 UTC.
+And there are 203 interest profiles which participants will be responsible for tracking.
+During the evaluation period, participants must maintain a running system
+that continuously monitors the tweet sample stream.
 
-For scenario A,  Table \ref{tab:resA} show the performance of our submitted three runs.
-The primary evaluation metric for scenario A is EG-1. **** task A description.
+For the push notifications scenario, the primary evaluation metrics
+include Expected Gain (EG) and Normalized Cumulative Gain (nCG).
+In the EG1 and nCG1 variants of the metrics, on a ``silent day'',
+the system receives a score of one (i.e., perfect score) if it does not push any tweets,
+or zero otherwise. In the EG0 and nCG0 variants of the metrics, for a silent day,
+all systems receive a gain of zero no matter what they do.
+Table \ref{tab:resA} shows the performance of our submitted three runs.
+We could observe that in every run, EG1 and nCG1 are much larger than EG0 and nCG0,
+which means our proposed system could recognise the ``silent day''
+and make no push actions to avoid bothering users.
+We use different text similarity algorithms in different runs
+but their performance are similar, which could tell the robustness
+of the nagetive KL-divergence distance with different smoothing strategies.
 
 \begin{table}[htbp]
 \centering
-\caption{Performance of submitted runs for scenario A}
+\caption{Performance in the Push Notifications Scenario.}
 \label{tab:resA}
 \begin{tabular}{lrrrr}
 \hline
-Run ID&ELG&nCG\\
+Run ID&EG1&EG0&nCG1&nCG0\\
 \hline
-PKUICSTRunA1&0.1415&0.1566\\
-PKUICSTRunA2&\textbf{0.3175}&\textbf{0.3127}\\
-PKUICSTRunA3&0.1382&0.1711\\
+PKUICSTRunA1&0.2342&0.0342&\textbf{0.2447}&0.0447\\
+PKUICSTRunA2&\textbf{0.2347}&\textbf{0.0400}&0.2433&\textbf{0.0487}\\
+PKUICSTRunA3&0.2329&0.0311&0.2343&0.0325\\
+Baseline&0.2289&0.0253&0.2330&0.0295\\
 \hline
 \end{tabular}
 \end{table}
 
-Table \ref{tab:resB} reports our results for scenario B periodic email digest. The primary evaluation metric is nDCG1. As it turns out, PKUICSTRunB3 significantly outperforms both other runs, indicating that the Simhash method for novelty verification module is successful in identifying novel tweets. Both PKUICSTRunB1 and PKUICSTRunB2 adopt the KL-divergence language model, with DIR(Bayesian Smoothing with Dirichlet Priors) smoothing and JM(Jelinek-Mercer method) respectively. And the uniform novel thresholds are $\gamma=0.73$ and $\gamma=0.72$ training on the TREC 15 dataset. From Table \ref{tab:resB}, we can see that nDCG1 and nDCG0 are the same in PKUICSTRunB1 and PKUICSTRunB2, which means on each $"$silent day$"$, our system still pushed some tweets that are regarded as unrelated ones. Obviously, the thresholds do not fit well. Further investigation and experiments are needed to solve this issue.
+Table \ref{tab:resB} reports our results for the email digest scenario.
+The primary evaluation metric is nDCG1.
+As it turns out, PKUICSTRunB3 significantly outperforms both other runs,
+indicating that the Simhash method for novelty verification module is successful in identifying novel tweets.
+Both PKUICSTRunB1 and PKUICSTRunB2 adopt the KL-divergence language model,
+with DIR(Bayesian Smoothing with Dirichlet Priors) smoothing and JM(Jelinek-Mercer method) respectively.
+And the uniform novel thresholds are $\gamma=0.73$ and $\gamma=0.72$ training on the TREC 15 dataset.
+From Table \ref{tab:resB}, we can see that nDCG1 and nDCG0 are the same in PKUICSTRunB1 and PKUICSTRunB2,
+which means on each $"$silent day$"$, our system still pushed some tweets that are regarded as unrelated ones.
+Obviously, the thresholds do not fit well. Further investigation and experiments are needed to solve this issue.
 
 \begin{table}[htbp]
 \centering
-\caption{Performance of submitted runs for scenario A}
+\caption{Performance in the Email Digest Scenario.}
 \label{tab:resB}
 \begin{tabular}{lrrr}
 \hline
@@ -35,15 +60,5 @@ PKUICSTRunB3&\textbf{0.2348}&0.0151\\
 \hline
 \end{tabular}
 \end{table}
-
-\section{Conclusion}
-In this work, we present our systems for TREC 2016 Real-Time Summarization Track.
-**********In the push notification on a mobile phone scenario, 
-we apply an adaptive timely query-biased filtering framework which monitors and estimates the twitter stream with given interest profiles continuously and immediately.
-In the email digest scenario,
-We apply web-based query expansion using language model to rank candidate tweets and then we leverage two kinds of strategies to measure novelty between tweets. Experimental results show our effectiveness and efficiency of our system in both tasks.
-
-
-
 
 
