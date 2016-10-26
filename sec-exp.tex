@@ -17,7 +17,7 @@ which means our proposed system could recognise the ``silent day''
 and make no push actions to avoid bothering users.
 We use different text similarity algorithms in different runs
 but their performance are similar, which could tell the robustness
-of the nagetive KL-divergence distance with different smoothing strategies.
+of the negative KL-divergence with different smoothing strategies.
 
 \begin{table}[htbp]
 \centering
@@ -38,7 +38,7 @@ Table \ref{tab:resB} reports our results for the email digest scenario.
 The primary evaluation metric is nDCG1.
 As it turns out, PKUICSTRunB3 significantly outperforms both other runs,
 indicating that the Simhash method for novelty verification module is successful in identifying novel tweets.
-Both PKUICSTRunB1 and PKUICSTRunB2 adopt the KL-divergence language model,
+Both PKUICSTRunB1 and PKUICSTRunB2 adopt the negative KL-divergence,
 with DIR(Bayesian Smoothing with Dirichlet Priors) smoothing and JM(Jelinek-Mercer method) respectively.
 And the uniform novel thresholds are $\gamma=0.73$ and $\gamma=0.72$ training on the TREC 15 dataset.
 From Table \ref{tab:resB}, we can see that nDCG1 and nDCG0 are the same in PKUICSTRunB1 and PKUICSTRunB2,

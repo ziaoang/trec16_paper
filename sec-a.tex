@@ -29,8 +29,8 @@ In this way, we simply ignore tweets that do not contain any keywords for each p
 This process keeps ``listening'' to the candidate tweets storage table.
 In every $T1$, it selects at most $K1$ untreated candidate tweets and compare them with the given users' interest profiles.
 For each (tweet, profile) pair, we first calculate the relevant score between them by the text similarity function $f$.
-If the relevant scroe is bigger than $\alpha$, we then compute similarity scores between this tweet and all pushed tweets of this profile
-via the text similarity function $f$, the biggest one will be chosen as the novel scroe.
+If the relevant score is bigger than $\alpha$, we then compute similarity scores between this tweet and all pushed tweets of this profile
+via the text similarity function $f$, the biggest one will be chosen as the novel score.
 If the novel score is smaller than $\beta$, we will insert it into the submission tweets storage table.
 In the last, these selected tweets will be set to treated or removed from the storage table.
 

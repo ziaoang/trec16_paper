@@ -24,12 +24,11 @@ which will accelerate identifying possible relevant tweets for each profile.
 \item \textbf{Query Expansion Module:}
 As microblog retrieval suffers severely from the vocabulary mismatch problem
 (i.e. term overlap between query and tweet is relatively small).
-To tackle this issue, we leverage web-based query expansion method to improve retrieval performance
-\cite{zhai2011mbfb}.
+To tackle this issue, we leverage web-based query expansion method to improve retrieval performance.
 As is known to all, Google search is the dominant search engine in the majority countries
 over the world, which indexes billions\cite{arlington2008google} of web pages,
 so that users can search for the information they desire through the use of keywords and operators.
-Therefore, we take the interest profile as the keywords to search in Google with Google Search Engine API before the evalution period.
+Therefore, we take the interest profile as the keywords to search in Google with Google Search Engine API before the evaluation period.
 As the user interest profile offered by TREC 2016 are JSON-formatted structure and each profile includes four fields, topid, title, description and narrative.
 Here we only use the topic keywords as our \emph{OriginQuery} since we utilize external web resource to depict the background information, noted as \emph{ExpansionQuery}.
 We utilize the expanded query to represent the interest profile and then estimate the relevance between the query and tweets.
@@ -45,9 +44,8 @@ we will traverse over them and judge novelty for each tweet,
 until we collect enough tweets (the count of pushed tweets is up to $100$).
 We use the text similarity function $g$ to measure the novelty between tweet
 and the pushed tweets of interest profile.
-When the novelty scroe is smaller than $\gamma$,
+When the novelty score is smaller than $\gamma$,
 we think the tweet is a novel one for current interest profile and should be pushed.
-
 In this module, there are two kinds of strategies to measure novelty between tweets:
 (1) Negative KL-divergence. The higher relevance score between tweets, the less novelty they are.
 (2) Simhash. It is a popular method to handle web page redundancy\cite{charikar2002similarity}.
