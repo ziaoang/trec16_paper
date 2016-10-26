@@ -43,7 +43,7 @@ Otherwise, the tweet is going to handle in the next round until accepted.
 \end{itemize}
 
 \subsection{Similarity Algorithm}
-We utilize the KL-divergence language model for $f$ and $g$ to measure the relevance between
+We utilize the negative KL-divergence language model for $f$ and $g$ to measure the relevance between
 query language model $\widehat{\theta}_Q$ and tweet language model $\widehat{\theta}_D$
 with the help of collection lanuage model $\widehat{\theta}_C$.
 The smoothing methods we use for language model are:
@@ -51,14 +51,14 @@ The smoothing methods we use for language model are:
 (a) Jelinek-Mercer Smoothing
 \begin{equation}
 \begin{aligned}
-JM(Q,&T,C) = \sum_{w \in Q} P(w|\widehat{\theta}_Q) \cdot \\
-&log \left( (1-\lambda) * P(w|\widehat{\theta}_T) + \lambda * P(w|\widehat{\theta}_C) \right)
+JM(Q,&D,C) = \sum_{w \in Q} P(w|\widehat{\theta}_Q) \cdot \\
+&log \left( (1-\lambda) * P(w|\widehat{\theta}_D) + \lambda * P(w|\widehat{\theta}_C) \right)
 \end{aligned}
 \end{equation}
 
 (b) Dirichlet Smoothing
 \begin{equation}
-DIR(Q,T,C) = JM(Q,T,C), \lambda = \frac{\mu}{|T| + \mu}
+DIR(Q,D,C) = JM(Q,D,C), \lambda = \frac{\mu}{|D| + \mu}
 \end{equation}
 
 \subsection{Parameter Selection}
@@ -70,7 +70,7 @@ which is showed in Table \ref{tab:paraA}.
 
 \begin{table}[htbp]
 \centering
-\caption{Parameters in the Email Digest Scenario.}
+\caption{Parameters of the Push Notifications Scenario.}
 \label{tab:paraA}
 \begin{tabular}{lccc}
 \hline

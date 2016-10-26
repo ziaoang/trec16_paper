@@ -1,6 +1,6 @@
-\section{Result and Analysis}
+\section{Experiment}
 The evaluation of TREC 2016 Real-time Summarization track takes place from
-Tuesday, August 2, 2016 00:00:00 UTC to August 11, 2016 23:59:59 UTC.
+August 2, 2016 UTC to August 11, 2016 UTC.
 And there are 203 interest profiles which participants will be responsible for tracking.
 During the evaluation period, participants must maintain a running system
 that continuously monitors the tweet sample stream.
@@ -21,7 +21,7 @@ of the nagetive KL-divergence distance with different smoothing strategies.
 
 \begin{table}[htbp]
 \centering
-\caption{Performance in the Push Notifications Scenario.}
+\caption{Performance of the Push Notifications Scenario.}
 \label{tab:resA}
 \begin{tabular}{lrrrr}
 \hline
@@ -30,7 +30,6 @@ Run ID&EG1&EG0&nCG1&nCG0\\
 PKUICSTRunA1&0.2342&0.0342&\textbf{0.2447}&0.0447\\
 PKUICSTRunA2&\textbf{0.2347}&\textbf{0.0400}&0.2433&\textbf{0.0487}\\
 PKUICSTRunA3&0.2329&0.0311&0.2343&0.0325\\
-Baseline&0.2289&0.0253&0.2330&0.0295\\
 \hline
 \end{tabular}
 \end{table}
@@ -43,19 +42,19 @@ Both PKUICSTRunB1 and PKUICSTRunB2 adopt the KL-divergence language model,
 with DIR(Bayesian Smoothing with Dirichlet Priors) smoothing and JM(Jelinek-Mercer method) respectively.
 And the uniform novel thresholds are $\gamma=0.73$ and $\gamma=0.72$ training on the TREC 15 dataset.
 From Table \ref{tab:resB}, we can see that nDCG1 and nDCG0 are the same in PKUICSTRunB1 and PKUICSTRunB2,
-which means on each $"$silent day$"$, our system still pushed some tweets that are regarded as unrelated ones.
+which means on each ``silent day'', our system still pushed some tweets that are regarded as unrelated ones.
 Obviously, the thresholds do not fit well. Further investigation and experiments are needed to solve this issue.
 
 \begin{table}[htbp]
 \centering
-\caption{Performance in the Email Digest Scenario.}
+\caption{Performance of the Email Digest Scenario.}
 \label{tab:resB}
 \begin{tabular}{lrrr}
 \hline
 Run ID&nDCG1&nDCG0\\
 \hline
 PKUICSTRunB1&0.1423&0.1423\\
-PKUICSTRunB2&0.1569&0.1569\\
+PKUICSTRunB2&0.1569&\textbf{0.1569}\\
 PKUICSTRunB3&\textbf{0.2348}&0.0151\\
 \hline
 \end{tabular}

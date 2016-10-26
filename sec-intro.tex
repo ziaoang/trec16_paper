@@ -10,7 +10,7 @@ which means participating systems need to decide whether or not push notificatio
 And two scenarios are described as follow:
 
 \begin{itemize}
-\item \textbf{Scenario A (mobile notification):} Content that is identified as relevant and novel by a system based on the user's interest profile should be sent to the user in a timely fashion. 
+\item \textbf{Scenario A (push notification):} Content that is identified as relevant and novel by a system based on the user's interest profile should be sent to the user in a timely fashion. 
 \item \textbf{Scenario B (email digest):} Participating systems should identify tweets and aggregate them into an email digest. The email should be periodically sent to a user. Under that circumstances, users can read a longer story about the contents.
 \end{itemize}
 
@@ -36,7 +36,7 @@ It can also store the push queue for each interest profile and help recover our 
 if any crash happens.
 
 In the scenario of email digest, similar with scenario A,
-we firstly clean the raw tweets generated between evaluation period.
+we firstly clean the raw tweets generated from the evaluation period.
 To better understand the user intent,
 we utilize Google web resource as external evidences to expand original query.
 Then, the language model framework is applyed to estimate the relevance between given interest profile with candidate tweets.
@@ -45,7 +45,6 @@ we rank the candidate tweets of every day by the relevance scores which adopt tw
 Once we obtain the ranked tweet list,
 we calculate the novelty scores between the candidate tweet with each tweet that has been pushed previously,
 the novelty threshold $\gamma$ is used to determine whether the candidate tweet is included in the email digest.
-And there are two kinds of strategies to measure the novelty,
-which will be explained in Section 4 in detail.
+And there are two kinds of strategies to measure the novelty, i.e. negative KL-divergence and Simhash.
 
 
