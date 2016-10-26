@@ -39,11 +39,12 @@ The primary evaluation metric is nDCG1.
 As it turns out, PKUICSTRunB3 significantly outperforms both other runs,
 indicating that the Simhash method for novelty verification module is successful in identifying novel tweets.
 Both PKUICSTRunB1 and PKUICSTRunB2 adopt the negative KL-divergence,
-with DIR(Bayesian Smoothing with Dirichlet Priors) smoothing and JM(Jelinek-Mercer method) respectively.
-And the uniform novel thresholds are $\gamma=0.73$ and $\gamma=0.72$ training on the TREC 15 dataset.
+with JM smoothing and DIR smoothing respectively.
+For each run, the uniform novel thresholds are training on the TREC 15 dataset.
 From Table \ref{tab:resB}, we can see that nDCG1 and nDCG0 are the same in PKUICSTRunB1 and PKUICSTRunB2,
 which means on each ``silent day'', our system still pushed some tweets that are regarded as unrelated ones.
-Obviously, the thresholds do not fit well. Further investigation and experiments are needed to solve this issue.
+Obviously, the thresholds do not fit well.
+Further investigation and experiments are needed to solve this issue.
 
 \begin{table}[htbp]
 \centering
